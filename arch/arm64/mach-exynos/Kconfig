@@ -302,6 +302,20 @@ config MACH_UNIVERSAL7580
 	  Machine support for Samsung EXYNOS7580 machine with device tree enabled.
 	  Select this if a fdt blob is available for the EXYNOS7580 SoC based board.
 
+config BOARD_A3XELTE
+	bool "SAMSUNG SM-A310F board using device tree"
+	default n
+	help
+	  Machine support for Samsung SM-A310F machine with device tree enabled.
+	  Select this if a specific fdt blob is available for the SM-A310F board
+
+config BOARD_J7ELTE
+	bool "SAMSUNG SM-J700F board using device tree"
+	default n
+	help
+	  Machine support for Samsung SM-J700F board with device tree enabled.
+	  Select this if a specific fdt blob is available for the SM-J700F board
+
 config SEC_FACTORY
 	bool "SAMSUNG Factory build option"
 	default n
@@ -331,28 +345,3 @@ config TIMA_LKMAUTH
 	help
 	  TIMA authenticates loaded kernel modules. Disable it if you don't
 	  want TIMA enabled.
-
-config TIMA_RKP
-	bool "Enable RKP (Realtime Kernel Protection) TIMA feature"
-	depends on TIMA
-	default n
-
-config RKP_KDP
-	bool "Protection for cred structure"
-	depends on TIMA_RKP
-	default n
-	help
-		Prevents unauthorized cred modification.
-
-config RKP_DMAP_PROT
-	bool "Page Double Mapping protection"
-	depends on (TIMA_RKP && RKP_KDP)
-	default n
-	help
-		Prevents unauthorized cred modification.
-
-config TIMA_TEST_INFRA
-	tristate "Testing infrastructure for TIMA"
-	default n
-	help
-	  Kernel bits of the TIMA test infrastructure

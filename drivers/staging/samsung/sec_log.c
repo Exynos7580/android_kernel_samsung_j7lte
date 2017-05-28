@@ -17,10 +17,6 @@
 #include <linux/memblock.h>
 #endif
 
-#ifdef CONFIG_KNOX_KAP
-extern int boot_mode_security;
-#endif
-
 /*
  * Example usage: sec_log=256K@0x45000000
  * In above case, log_buf size is 256KB and its base address is
@@ -401,92 +397,6 @@ late_initcall(sec_tsp_log_late_init);
 
 
 #ifdef CONFIG_SEC_DEBUG_TIMA_LOG
-#ifdef   CONFIG_TIMA_RKP
-
-static int  tima_setup_rkp_mem(void){
-#ifdef CONFIG_NO_BOOTMEM
-	if (memblock_is_region_reserved(TIMA_DEBUG_LOG_START, TIMA_DEBUG_LOG_SIZE) ||
-			memblock_reserve(TIMA_DEBUG_LOG_START, TIMA_DEBUG_LOG_SIZE)) {
-#else
-	if(reserve_bootmem(TIMA_DEBUG_LOG_START, TIMA_DEBUG_LOG_SIZE, BOOTMEM_EXCLUSIVE)){
-#endif
-		pr_err("%s: RKP failed reserving size %d " \
-			   "at base 0x%x\n", __func__, TIMA_DEBUG_LOG_SIZE, TIMA_DEBUG_LOG_START);
-		goto out;
-	}
-	pr_info("RKP :%s, base:%x, size:%x \n", __func__,TIMA_DEBUG_LOG_START, TIMA_DEBUG_LOG_SIZE);
-
-#ifdef CONFIG_NO_BOOTMEM
-	if (memblock_is_region_reserved(TIMA_SEC_LOG, TIMA_SEC_LOG_SIZE) ||
-			memblock_reserve(TIMA_SEC_LOG, TIMA_SEC_LOG_SIZE)) {
-#else
-	if(reserve_bootmem(TIMA_SEC_LOG, TIMA_SEC_LOG_SIZE, BOOTMEM_EXCLUSIVE)){
-#endif
-		pr_err("%s: RKP failed reserving size %d " \
-			   "at base 0x%x\n", __func__, TIMA_SEC_LOG_SIZE, TIMA_SEC_LOG);
-		goto out;
-	}
-	pr_info("RKP :%s, base:%x, size:%x \n", __func__,TIMA_SEC_LOG, TIMA_SEC_LOG_SIZE);
-
-#ifdef CONFIG_NO_BOOTMEM
-	if (memblock_is_region_reserved(TIMA_PHYS_MAP, TIMA_PHYS_MAP_SIZE) ||
-			memblock_reserve(TIMA_PHYS_MAP, TIMA_PHYS_MAP_SIZE)) {
-#else
-	if(reserve_bootmem(TIMA_PHYS_MAP,  TIMA_PHYS_MAP_SIZE, BOOTMEM_EXCLUSIVE)){
-#endif
-		pr_err("%s: RKP failed reserving size %d "					\
-			   "at base 0x%x\n", __func__, TIMA_PHYS_MAP_SIZE, TIMA_PHYS_MAP);
-		goto out;
-	}
-	pr_info("RKP :%s, base:%x, size:%x \n", __func__,TIMA_PHYS_MAP, TIMA_PHYS_MAP_SIZE);
-
-#ifdef CONFIG_NO_BOOTMEM
-	if (memblock_is_region_reserved(TIMA_DASHBOARD_START, TIMA_DASHBOARD_SIZE) ||
-			memblock_reserve(TIMA_DASHBOARD_START, TIMA_DASHBOARD_SIZE)) {
-#else
-	if(reserve_bootmem(TIMA_DASHBOARD_START,  TIMA_DASHBOARD_SIZE, BOOTMEM_EXCLUSIVE)){
-#endif
-		pr_err("%s: RKP failed reserving size %d "					\
-			   "at base 0x%x\n", __func__, TIMA_DASHBOARD_SIZE, TIMA_DASHBOARD_START);
-		goto out;
-	}
-	pr_info("RKP :%s, base:%x, size:%x \n", __func__,TIMA_DASHBOARD_START, TIMA_DASHBOARD_SIZE);
-
-
-#ifdef CONFIG_NO_BOOTMEM
-	if (memblock_is_region_reserved(TIMA_ROBUF_START, TIMA_ROBUF_SIZE) ||
-			memblock_reserve(TIMA_ROBUF_START, TIMA_ROBUF_SIZE)) {
-#else
-	if(reserve_bootmem(TIMA_ROBUF_START,  TIMA_ROBUF_SIZE, BOOTMEM_EXCLUSIVE)){
-#endif
-		pr_err("%s: RKP failed reserving size %d "					\
-			   "at base 0x%x\n", __func__, TIMA_ROBUF_SIZE, TIMA_ROBUF_START);
-		goto out;
-	}
-	pr_info("RKP :%s, base:%x, size:%x \n", __func__,TIMA_ROBUF_START, TIMA_ROBUF_SIZE);
-
-#ifdef CONFIG_NO_BOOTMEM
-	if (memblock_is_region_reserved(TIMA_VMM_START, TIMA_VMM_SIZE) ||
-			memblock_reserve(TIMA_VMM_START, TIMA_VMM_SIZE)) {
-#else
-	if(reserve_bootmem(TIMA_VMM_START,  TIMA_VMM_SIZE, BOOTMEM_EXCLUSIVE)){
-#endif
-		pr_err("%s: RKP failed reserving size %d "					\
-			   "at base 0x%x\n", __func__, TIMA_VMM_SIZE, TIMA_VMM_START);
-		goto out;
-	}
-	pr_info("RKP :%s, base:%x, size:%x \n", __func__,TIMA_VMM_START, TIMA_VMM_SIZE);
-	
-	return 1; 
- out: 
-	return 0; 
-
-}
-#else /* !CONFIG_TIMA_RKP*/
-static int tima_setup_rkp_mem(void){
-	return 1;
-}
-#endif /* CONFIG_TIMA_RKP */
 static int __init sec_tima_log_setup(char *str)
 {
 	unsigned size = memparse(str, &str);
@@ -507,11 +417,6 @@ static int __init sec_tima_log_setup(char *str)
 			goto out;
 	}
 	pr_info("tima :%s, base:%lx, size:%x \n", __func__,base, size);
-#ifdef CONFIG_KNOX_KAP
-	if (!boot_mode_security) goto out;
-#endif
-
-	if( !tima_setup_rkp_mem())  goto out; 
 
 	return 1;
 out:

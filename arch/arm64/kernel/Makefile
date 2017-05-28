@@ -33,7 +33,6 @@ arm64-obj-$(CONFIG_JUMP_LABEL)		+= jump_label.o
 arm64-obj-$(CONFIG_KGDB)		+= kgdb.o
 arm64-obj-$(CONFIG_CORE_TEST)		+= core_test.o
 arm64-obj-$(CONFIG_ARCH_EXYNOS)		+= exynos-smc.o
-arm64-obj-$(CONFIG_TIMA_RKP)		+= rkp_entry.o
 # from android-3.10
 arm64-obj-$(CONFIG_ARM_CPU_SUSPEND)	+= sleep.o suspend.o
 

@@ -394,12 +394,6 @@ void free_initmem(void)
 {
 	poison_init_mem(__init_begin, __init_end - __init_begin);
 	free_initmem_default(0);
-#ifdef CONFIG_TIMA_RKP
-#ifdef CONFIG_KNOX_KAP
-	if (boot_mode_security)
-#endif
-		rkp_call(RKP_DEF_INIT, 0, 0, 0, 0, 0);
-#endif
 }
 
 #ifdef CONFIG_BLK_DEV_INITRD

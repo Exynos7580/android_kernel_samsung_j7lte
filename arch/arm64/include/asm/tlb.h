@@ -176,31 +176,12 @@ static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
 }
 
 #ifndef CONFIG_ARM64_64K_PAGES
-#ifndef CONFIG_TIMA_RKP
 static inline void __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp,
 				  unsigned long addr)
 {
 	tlb_add_flush(tlb, addr);
 	tlb_remove_page(tlb, virt_to_page(pmdp));
 }
-#else
-static inline void __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp,
-				  unsigned long addr)
-{
-	int rkp_do = 0;
-#ifdef CONFIG_KNOX_KAP
-	if (boot_mode_security)
-#endif	//CONFIG_KNOX_KAP
-		rkp_do = 1;
-	if (rkp_do && (unsigned long)pmdp >= (unsigned long)RKP_RBUF_VA && (unsigned long)pmdp < ((unsigned long)RKP_RBUF_VA + TIMA_ROBUF_SIZE))
-		rkp_ro_free((void*)pmdp);
-	else {
-		tlb_add_flush(tlb, addr);
-		tlb_remove_page(tlb, virt_to_page(pmdp));
-	}
-}
-
-#endif
 #endif
 
 #define pte_free_tlb(tlb, ptep, addr)	__pte_free_tlb(tlb, ptep, addr)
